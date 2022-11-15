@@ -19,6 +19,12 @@
 *.tar.gz
 *.rar
 
+# build
+build
+
+# gradle
+.gradle
+
 # intelliJ
 .idea
 
