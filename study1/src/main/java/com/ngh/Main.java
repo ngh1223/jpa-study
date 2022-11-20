@@ -17,13 +17,12 @@ public class Main {
 
         try {
 
-
             tx.begin(); //트랜잭션 시작
 
             logic(em); // 비지니스 로직
 
             tx.commit();//트랜잭션 커밋
-
+            // 커밋하는 순간, DB에 SQL 전송 (flush)
         } catch (Exception e) {
             e.printStackTrace();
             tx.rollback(); //트랜잭션 롤백
@@ -45,19 +44,27 @@ public class Main {
         //등록
         em.persist(member);
 
-        //수정
+        //수정 - 수정할때, 한 컬럼만 수정해도 모든 컬럼이 수정되는 SQL 이 생성된다.
         member.setAge(20);
 
         //한 건 조회
         Member findMember = em.find(Member.class, id);
         System.out.println("findMember=" + findMember.getName() + ", age=" + findMember.getAge());
+        // 이때까지 쓰기지연 SQL 저장소에 쿼리 저장
 
         //목록 조회
         List<Member> members = em.createQuery("select m from Member m", Member.class).getResultList();
         System.out.println("members.size=" + members.size());
+        // JPQL 을 사용했기 때문에 flush 가 발생한다.
 
         //삭제
-        em.remove(member);
+        // em.remove(member);
+        // 이때는 쓰기지연 SQL 저장소에 쿼리 저장
 
+        em.detach(member);
+        // 준영속
+
+        em.merge(member);
+        // 병합 -> 1차캐시에서 먼저 검색, 없으면 DB 에서 검색 (id 가준으로 검색)
     }
 }
