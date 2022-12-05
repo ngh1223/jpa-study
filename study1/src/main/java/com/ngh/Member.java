@@ -17,6 +17,10 @@ public class Member {
     @Column(columnDefinition = "VARCHAR(10)")
     private String name;
 
+    @ManyToOne
+    @JoinColumn(name = "team_id")
+    private Team team;
+
     private Integer age;
 
     private String ageName;
@@ -60,5 +64,13 @@ public class Member {
 
     public void setAgeName(String ageName) {
         this.ageName = ageName;
+    }
+
+    public Team getTeam() {
+        return team;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
     }
 }

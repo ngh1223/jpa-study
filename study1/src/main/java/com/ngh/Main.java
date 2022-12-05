@@ -1,9 +1,10 @@
 package com.ngh;
 
 
+import com.ngh.util.EntityTransactionUtil;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import java.util.List;
 
@@ -11,26 +12,42 @@ public class Main {
     public static void main(String[] args) {
         //엔티티 매니저 팩토리 생성
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("study1");
-        EntityManager em = emf.createEntityManager(); //엔티티 매니저 생성
+        EntityTransactionUtil etu = new EntityTransactionUtil(emf);
 
-        EntityTransaction tx = em.getTransaction(); //트랜잭션 기능 획득
+        etu.doTransaction((EntityManager em) -> {
+            mappingLogic(em);// 연관관계 사용
+            return null;
+        });
 
-        try {
-
-            tx.begin(); //트랜잭션 시작
-
-            logic(em); // 비지니스 로직
-
-            tx.commit();//트랜잭션 커밋
-            // 커밋하는 순간, DB에 SQL 전송 (flush)
-        } catch (Exception e) {
-            e.printStackTrace();
-            tx.rollback(); //트랜잭션 롤백
-        } finally {
-            em.close(); //엔티티 매니저 종료
-        }
+        etu.doTransaction((EntityManager em) -> {
+            findTeam(em);// 연관관계 사용
+            return null;
+        });
 
         emf.close(); //엔티티 매니저 팩토리 종료
+    }
+
+    private static void findTeam(EntityManager em) {
+
+        Team team1 = em.find(Team.class, 1);
+
+        List<Member> members = team1.getMembers();
+
+        System.out.println(members.get(0));
+    }
+
+    private static void mappingLogic(EntityManager em) {
+        Team team = new Team();
+        team.setName("team1");
+
+        em.persist(team);
+
+        Member member = new Member();
+        member.setId("member1");
+        member.setName("member1");
+        member.setTeam(team);
+
+        em.persist(member);
     }
 
     public static void logic(EntityManager em) {
