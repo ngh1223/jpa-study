@@ -2,6 +2,7 @@ package com.ngh;
 
 
 import com.ngh.domain.*;
+import com.ngh.domain.key.ParentIdClass;
 import com.ngh.util.EntityTransactionUtil;
 
 import javax.persistence.EntityManager;
@@ -17,13 +18,33 @@ public class Main {
         EntityTransactionUtil etu = new EntityTransactionUtil(emf);
 
         etu.doTransaction((EntityManager em) -> {
-            joinStrategy(em); // 조인 전략
-            singleTableStrategy(em); // 단일 테이블 전략
-            tablePerClassStrategy(em); // 구현 클래스마다 테이블 전략
+            compositeKey(em);
+
+            // joinStrategy(em); // 조인 전략
+            // singleTableStrategy(em); // 단일 테이블 전략
+            // tablePerClassStrategy(em); // 구현 클래스마다 테이블 전략
             return null;
         });
 
         emf.close(); //엔티티 매니저 팩토리 종료
+    }
+
+    private static void compositeKey(EntityManager em) {
+        ParentIdClassNonIdentify pini = new ParentIdClassNonIdentify();
+        pini.setId1("i1");
+        pini.setId2("i2");
+
+        em.persist(pini);
+
+        em.find(ParentIdClassNonIdentify.class, new ParentIdClass("i1", "i2"));
+
+        ChildIdClassNonIdentify cini = new ChildIdClassNonIdentify();
+        cini.setId("c1");
+        cini.setParent(pini);
+
+        em.persist(cini);
+
+
     }
 
     private static void joinStrategy(EntityManager em) {
