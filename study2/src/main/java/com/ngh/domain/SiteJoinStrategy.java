@@ -6,7 +6,10 @@ import javax.persistence.*;
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "s_type")
 @Table(name = "site_join_strategy")
-public abstract class SiteJoinStrategy {
+@AttributeOverrides({
+        @AttributeOverride(name = "createdDate", column = @Column(name = "c_date"))
+})
+public abstract class SiteJoinStrategy extends BaseDateEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)

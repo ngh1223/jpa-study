@@ -7,6 +7,7 @@ import com.ngh.util.EntityTransactionUtil;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class Main {
@@ -29,6 +30,7 @@ public class Main {
         NaverJoinStrategy naverJoinStrategy = new NaverJoinStrategy();
         naverJoinStrategy.setSiteId("test");
         naverJoinStrategy.setNickName("nickTest");
+        naverJoinStrategy.setCreatedDate(LocalDateTime.now());
 
         em.persist(naverJoinStrategy);
 
