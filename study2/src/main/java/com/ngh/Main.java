@@ -18,8 +18,15 @@ public class Main {
         EntityTransactionUtil etu = new EntityTransactionUtil(emf);
 
         etu.doTransaction((EntityManager em) -> {
-            compositeKey(em);
+            logic(em);
+            return null;
+        });
 
+
+        etu.doTransaction((EntityManager em) -> {
+            proxyTest(em);
+
+            // compositeKey(em);
             // joinStrategy(em); // 조인 전략
             // singleTableStrategy(em); // 단일 테이블 전략
             // tablePerClassStrategy(em); // 구현 클래스마다 테이블 전략
@@ -27,6 +34,16 @@ public class Main {
         });
 
         emf.close(); //엔티티 매니저 팩토리 종료
+    }
+
+    private static void proxyTest(EntityManager em) {
+        Member id1 = em.find(Member.class, "id1");
+
+        em.remove(id1);
+        System.out.println(id1.getTeam());
+
+        System.out.println(id1.getAge());
+
     }
 
     private static void compositeKey(EntityManager em) {
@@ -89,8 +106,24 @@ public class Main {
         //등록
         em.persist(member);
 
+        String id2 = "id2";
+        Member member2 = new Member();
+        member2.setId(id2);
+        member2.setName("현2");
+        member2.setAge(2);
+
+        //등록
+        em.persist(member2);
+
         //수정 - 수정할때, 한 컬럼만 수정해도 모든 컬럼이 수정되는 SQL 이 생성된다.
         member.setAge(20);
+
+        Team team = new Team();
+        team.setName("team1");
+
+        em.persist(team);
+        member.setTeam(team);
+        member2.setTeam(team);
 
         //한 건 조회
         Member findMember = em.find(Member.class, id);

@@ -14,7 +14,7 @@ public class Team {
 
     private String name;
 
-    @OneToMany(mappedBy = "team") // 반대쪽
+    @OneToMany(mappedBy = "team", fetch = FetchType.LAZY, orphanRemoval = true) // 반대쪽
     private List<Member> members = new ArrayList<>();
 
     public List<Member> getMembers() {

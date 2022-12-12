@@ -17,7 +17,7 @@ public class Member {
     @Column(columnDefinition = "VARCHAR(10)")
     private String name;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "team_id")
     private Team team;
 
