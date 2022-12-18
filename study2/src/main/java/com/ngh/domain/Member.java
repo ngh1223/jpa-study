@@ -1,6 +1,11 @@
 package com.ngh.domain;
 
+import com.ngh.domain.embed.Address;
+import com.ngh.domain.embed.Period;
+
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Entity(name = "Member")
@@ -16,6 +21,33 @@ public class Member {
     private String id;
     @Column(columnDefinition = "VARCHAR(10)")
     private String name;
+
+    @Embedded
+    private Address address;
+
+    @Embedded
+    private Period period;
+
+    @ElementCollection
+    @CollectionTable(name = "nickname", joinColumns = @JoinColumn(name = "member_id"))
+    @Column(name = "nickname")
+    private Set<String> nicknames = new HashSet<>();
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public Period getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(Period period) {
+        this.period = period;
+    }
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "team_id")
